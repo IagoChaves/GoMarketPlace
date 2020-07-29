@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-
 import { View } from 'react-native';
-
 import {
   Container,
   ProductContainer,
@@ -27,7 +25,7 @@ import { useCart } from '../../hooks/cart';
 
 import formatValue from '../../utils/formatValue';
 
-interface Product {
+export interface Product {
   id: string;
   title: string;
   image_url: string;
@@ -47,21 +45,22 @@ const Cart: React.FC = () => {
   }
 
   const cartTotal = useMemo(() => {
-    let quantity = 0;
-    products.forEach(product => {
-      quantity += product.price * product.quantity;
-    });
+    const amount = products.reduce(
+      (accumulator, currentValue) =>
+        currentValue.price * currentValue.quantity + accumulator,
+      0,
+    );
 
-    return formatValue(quantity);
+    return formatValue(amount);
   }, [products]);
 
   const totalItensInCart = useMemo(() => {
-    let count = 0;
-    products.forEach(product => {
-      count += 1 * product.quantity;
-    });
+    const total = products.reduce(
+      (accumulator, currentValue) => accumulator + currentValue.quantity,
+      0,
+    );
 
-    return count;
+    return total;
   }, [products]);
 
   return (
@@ -74,7 +73,7 @@ const Cart: React.FC = () => {
           ListFooterComponentStyle={{
             height: 80,
           }}
-          renderItem={({ item }: { item: Product }) => (
+          renderItem={({ item }) => (
             <Product>
               <ProductImage source={{ uri: item.image_url }} />
               <ProductTitleContainer>
